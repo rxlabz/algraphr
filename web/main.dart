@@ -47,9 +47,9 @@ AnchorElement btOpen;
 
 CheckboxInputElement chkCapture;
 
-int cR = 0;
-int cG = 0;
-int cB = 0;
+int cR = 2;
+int cG = 2;
+int cB = 2;
 
 void main() {
   initPage();
