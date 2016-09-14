@@ -168,9 +168,9 @@ String fillHexa(String v){
   int num = 6-v.length;
   if( num <= 0) return v;
   var l = new List(num)..fillRange(0,num,'0');
-  print('l   ${l.length}');
+  //print('l   ${l.length}');
   var _l = l.map((o)=>o).toList()..add(v);
-  print('fillHexa » l.toString() ${_l.join('')}');
+  //print('fillHexa » l.toString() ${_l.join('')}');
   return _l.join('');
 }
 
