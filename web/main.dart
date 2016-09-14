@@ -233,8 +233,8 @@ void updateLines(List<FallingCircle> pts) {
 }
 
 List<Circle> filterPoints(List<Circle> pts) {
-  if(! pts.isEmpty)
-    print('filterPoints  c.cy ${pts[0].cy}');
+  /*if(! pts.isEmpty)
+    print('filterPoints  c.cy ${pts[0].cy}');*/
   return pts.where((c) => c.cy < cLimit).toList();
 }
 
@@ -264,7 +264,7 @@ void updatePolygons() {
       b = b > 255 ? 255:b;
       currentColor = r << 16 | g << 8 | b;
 
-      print('updatePolygons  fillCol.toRadixString(16) ${currentColor.toRadixString(16)}');
+      //print('updatePolygons  fillCol.toRadixString(16) ${currentColor.toRadixString(16)}');
       p.setAttribute('fill', "#${fillHexa(currentColor.toRadixString(16))}");
 
       // stroke
