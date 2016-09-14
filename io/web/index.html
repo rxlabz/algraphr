@@ -1,0 +1,84 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="blur_fast.js"></script>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.blue_grey-pink.min.css">
+    <script defer="" src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    <script defer="" src="main.dart.js"></script>
+    
+    <title>Algraphr</title>
+    <style>
+        html, body {
+            /*margin: 0;*/
+            background: #202020;
+            /*font-family: 'Geneva', 'Arial', sans-serif;*/
+        }
+
+        svg, canvas {
+            left: 0;
+            top: 0;
+            position: absolute;
+        }
+
+        #container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #menu {
+            /*display: none;*/
+            flex-direction: column;
+            background-color: #1A1A1A;
+            height: 100%;
+            position: absolute;
+            right: 0;
+            width: 120px;
+            padding-top: 30px;
+            padding-left: 10px;
+            color:#888;
+            font-size: 0.8rem;
+        }
+
+        #bt-open, #bt-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+
+        #bt-open{
+            display: none;
+        }
+
+        .row{
+            display: flex;
+            align-content: center;
+        }
+
+    </style>
+    <script type="text/javascript">
+        function blur() {
+            console.log('blur');
+            boxBlurCanvasRGB('canvas', 0, 0, innerWidth, innerHeight, 2, 1);
+        }
+    </script>
+</head>
+<body>
+<div id="container">
+
+    <canvas id="canvas"></canvas>
+    <svg></svg>
+</div>
+<div id="menu">
+    <a id="bt-close" href="#">X</a>
+
+    <div class="row"><span>R</span>
+        <input id="sld-r" class="mdl-slider mdl-js-slider" type="range" min="0" max="10" value="0"></div>
+    <div class="row"><span>G</span>
+        <input id="sld-g" class="mdl-slider mdl-js-slider" type="range" min="0" max="10" value="0"></div>
+    <div class="row"><span>B</span>
+        <input id="sld-b" class="mdl-slider mdl-js-slider" type="range" min="0" max="10" value="0"></div>
+</div>
+<a id="bt-open" href="#">M</a>
+
+</body></html>
