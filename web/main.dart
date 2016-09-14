@@ -22,9 +22,6 @@ const int MAX_NUM_POLYGONS = 64;
 const double DEFAULT_OPACITY = 0.0;
 const double OPACITY_STEP = 0.004;
 
-const String FILL_ALPHA = "#101010";
-
-
 CanvasElement canvas;
 
 SvgElement svg;
@@ -42,9 +39,13 @@ Map<Circle, LineElement> circleLines = {};
 Map<List<Circle>, PolygonElement> circlePolygones = {};
 List<String> polygonsPts = [];
 
+Timer timer;
+
 DivElement menu;
 AnchorElement btClose;
 AnchorElement btOpen;
+
+CheckboxInputElement chkCapture;
 
 int cR = 0;
 int cG = 0;
@@ -55,16 +56,30 @@ void main() {
   initMenu();
 
   if (AUTO_CAPTURE)
-    final t = new Timer.periodic(
+    timer = new Timer.periodic(
         new Duration(milliseconds: CAPTURE_INTERVAL), onCaptureTimer);
 
   window.animationFrame.then(drawLines);
+}
+
+updateAutoCapture( bool on ){
+  if(on)
+    timer = new Timer.periodic(
+        new Duration(milliseconds: CAPTURE_INTERVAL), onCaptureTimer);
+  else
+    timer.cancel();
 }
 
 void initMenu() {
   menu = querySelector('#menu');
   btClose = querySelector('#bt-close');
   btOpen = querySelector('#bt-open');
+
+  chkCapture = querySelector('#chk-capture');
+  chkCapture.onChange.listen((e){
+    updateAutoCapture(chkCapture.checked);
+  });
+
   InputElement sldR = querySelector('#sld-r');
   sldR.onChange.listen((e)=> cR = int.parse(sldR.value) );
   InputElement sldG = querySelector('#sld-g');
@@ -264,7 +279,7 @@ void updatePolygons() {
     if (LIVE_OPACITY) {
       p.setAttribute('fill-opacity', "$opacity");
       //p.setAttribute('stroke-opacity', "${opacity*1.2}");
-      p.setAttribute('stroke-opacity', "0.3");
+      p.setAttribute('stroke-opacity', "0.1");
     }
     //p.setAttribute('fill', "#${newFill.toRadixString(16)}" );
   });
