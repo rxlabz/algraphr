@@ -1,6 +1,6 @@
-# algraphr 
+# algraphr - POC
 
-- Interactive vector graphics generator - POC
+- Interactive vector graphics generator inspired by [Eric Natzke's work](http://blog.natzke.com/)
 - Dart - SVG - Canvas
 
 [Try it](http://rxlabz.github.io/algraphr)
@@ -9,8 +9,7 @@
 
 ![ex2](https://www.evernote.com/l/AAG4XBu45OpNirCnoCgI0_7pL38xMlq34RoB/image.png)
 
-Crédits : 
+ 
 
-- inspired by [Eric Natzke's work](http://blog.natzke.com/)
-- Blur filter from [Quasimondo](http://www.quasimondo.com/BoxBlurForCanvas/FastBlurDemo.html) 
+
 
