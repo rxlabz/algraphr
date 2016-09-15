@@ -60,6 +60,14 @@ svg, canvas {
     font-size: 0.8rem;
 }
 
+#menu h1{
+    font-size: 1.4rem;
+}
+
+#menu h3{
+    font-size: 1.1rem;
+}
+
 #bt-open, #bt-close {
     position: absolute;
     top: 8px;

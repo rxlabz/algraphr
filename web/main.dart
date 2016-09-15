@@ -297,7 +297,7 @@ void updatePolygons() {
     }
 
     if( BLUR && counter < ( numP - 20 ) ){
-      /*V.FilterElement f = new V.FilterElement();
+      V.FilterElement f = new V.FilterElement();
       f.id = "B$counter";
       var fBlur = new FEGaussianBlurElement();
       fBlur.setAttribute("stdDeviation", '${(1 - ( counter / numP ))}') ;
@@ -307,12 +307,11 @@ void updatePolygons() {
       if( existingId.isNotEmpty )
         existingId.first.remove();
       svg.append(f);
-        */
 
-      int level = ((counter / numP)*blurCoef).round();
+      /*int level = ((counter / numP)*blurCoef).round();
       level = level > 7 ? 7 : level;
       print('updatePolygons » level ${level} / $numP');
-      p.style.filter = 'url(#blur$level)';
+      p.style.filter = 'url(#blur$level)';*/
 
       //int level = ((counter / numP)*blurCoef).round();
       //p.style.filter = 'url(#blur$level)';
