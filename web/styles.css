@@ -1,5 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto);
-
 html, body {
     background: #202020;
     /*width: 100%;
@@ -27,29 +25,6 @@ svg, canvas {
     overflow-y: hidden ;
 }
 
-#menu {
-    /*display: none;*/
-    flex-direction: column;
-    background-color: #1A1A1A;
-    height: 100%;
-    position: absolute;
-    right: 0;
-    width: 120px;
-    padding-top: 30px;
-    padding-left: 10px;
-    color:#888;
-    font-size: 0.8rem;
-}
-
-#bt-open, #bt-close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-}
-
-#bt-open{
-    display: none;
-}
 
 .row{
     display: flex;
@@ -69,3 +44,32 @@ svg, canvas {
 }
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.std { color: #607D8B; }
+
+
+#menu {
+    /*display: none;*/
+    flex-direction: column;
+    background-color: #1A1A1A;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    width: 140px;
+    padding-top: 30px;
+    padding-left: 10px;
+    color:#888;
+    font-size: 0.8rem;
+}
+
+#bt-open, #bt-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+#bt-open{
+    display: none;
+}
+
+#sld-captureFrqGp{
+    display: none;
+}

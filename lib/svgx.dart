@@ -1,5 +1,4 @@
 @JS()
-
 library svgx;
 
 import 'package:js/js.dart';
@@ -108,12 +107,11 @@ getLine(M.Point p1, M.Point p2) => new LineElement()
   ..setAttribute('y1', '${p1.y}')
   ..setAttribute('y2', '${p2.y}');
 
-getPointsPolygon(String pts)=>new PolygonElement()
+getPointsPolygon(String pts) => new PolygonElement()
   ..setAttribute('stroke', "#333333")
   /*..setAttribute('stroke', DEFAULT_COLOR)*/
   ..setAttribute('fill', '#00ff00')
   ..setAttribute('points', pts);
-
 
 lineToPoints(LineElement l, Circle c0, Circle c1) => l
   ..setAttribute('x1', '${c0.cx.roundToDouble() }px')
@@ -121,15 +119,15 @@ lineToPoints(LineElement l, Circle c0, Circle c1) => l
   ..setAttribute('x2', '${c1.cx.roundToDouble() }px')
   ..setAttribute('y2', '${c1.cy.roundToDouble() + 2 }px');
 
-updatePolygon(PolygonElement p, List<Circle> pts, [num opacity]){
+updatePolygon(PolygonElement p, List<Circle> pts, [num opacity]) {
   p.setAttribute('points', circles2PathPoints(pts));
 }
 
 rmOutLines(List<LineElement> lines, int limit) {
   lines
       .where((l) =>
-  M.max(double.parse(attr(l, 'y2')), double.parse(attr(l, 'y1'))) >=
-      limit)
+          ( M.max(double.parse(attr(l, 'y2')), double.parse(attr(l, 'y1'))) >=
+          limit) || (attr(l, 'y2') == attr(l, 'y1')))
       .forEach((l) => l.remove());
 }
 
@@ -161,15 +159,17 @@ String toSVGBloc(String svg, int width, int height) =>
     '''<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"${width}\"
      height=\"${height}\"> ${svg}</svg>''';
 
-circles2PathPoints(List<FallingCircle> els) =>
-    els.fold('', (String prv, FallingCircle c) => prv += "${c.cx.roundToDouble()},${c.cy.roundToDouble()} ");
+circles2PathPoints(List<FallingCircle> els) => els.fold(
+    '',
+    (String prv, FallingCircle c) =>
+        prv += "${c.cx.roundToDouble()},${c.cy.roundToDouble()} ");
 
-String fillHexa(String v){
-  int num = 6-v.length;
-  if( num <= 0) return v;
-  var l = new List(num)..fillRange(0,num,'0');
+String fillHexa(String v) {
+  int num = 6 - v.length;
+  if (num <= 0) return v;
+  var l = new List(num)..fillRange(0, num, '0');
   //print('l   ${l.length}');
-  var _l = l.map((o)=>o).toList()..add(v);
+  var _l = l.map((o) => o).toList()..add(v);
   //print('fillHexa » l.toString() ${_l.join('')}');
   return _l.join('');
 }

@@ -7,12 +7,11 @@ import 'dart:svg' as V;
 import 'package:algraphr/svgx.dart';
 
 const bool AUTO_CAPTURE = false;
-const int CAPTURE_INTERVAL = 999;
 
 const bool LIVING_FILL = true;
 const bool LIVING_STROKE = false;
 const bool LIVE_OPACITY = false;
-const bool BLUR = false;
+bool BLUR = false;
 
 const int MAX_DIST = 16;
 const int LINE_BOTTOM_LIMIT = 100;
@@ -46,6 +45,11 @@ AnchorElement btClose;
 AnchorElement btOpen;
 
 CheckboxInputElement chkCapture;
+CheckboxInputElement chkBlur;
+
+InputElement sldCaptureFrq;
+
+int capture_frequency = 1000;
 
 int cR = 2;
 int cG = 2;
@@ -57,17 +61,19 @@ void main() {
 
   if (AUTO_CAPTURE)
     timer = new Timer.periodic(
-        new Duration(milliseconds: CAPTURE_INTERVAL), onCaptureTimer);
+        new Duration(milliseconds: capture_frequency), onCaptureTimer);
 
   window.animationFrame.then(drawLines);
 }
 
-updateAutoCapture( bool on ){
-  if(on)
+void updateAutoCapture(bool on) {
+  if (on)
     timer = new Timer.periodic(
-        new Duration(milliseconds: CAPTURE_INTERVAL), onCaptureTimer);
+        new Duration(milliseconds: capture_frequency), onCaptureTimer);
   else
     timer.cancel();
+
+  querySelector("#sld-captureFrqGp").style.display = on ? 'flex' : 'none';
 }
 
 void initMenu() {
@@ -75,17 +81,27 @@ void initMenu() {
   btClose = querySelector('#bt-close');
   btOpen = querySelector('#bt-open');
 
-  chkCapture = querySelector('#chk-capture');
-  chkCapture.onChange.listen((e){
-    updateAutoCapture(chkCapture.checked);
+  chkCapture = querySelector('#chk-capture')..onChange.listen((e)=>
+    updateAutoCapture(chkCapture.checked)
+  );
+  chkBlur = querySelector('#chk-blur')..onChange.listen((e)=>
+      BLUR = chkBlur.checked
+  );
+
+  sldCaptureFrq = querySelector('#sld-captureFrq');
+  sldCaptureFrq.onChange.listen((e) {
+    capture_frequency = int.parse(sldCaptureFrq.value);
+    timer.cancel();
+    timer = new Timer.periodic(
+        new Duration(milliseconds: capture_frequency), onCaptureTimer);
   });
 
   InputElement sldR = querySelector('#sld-r');
-  sldR.onChange.listen((e)=> cR = int.parse(sldR.value) );
+  sldR.onChange.listen((e) => cR = int.parse(sldR.value));
   InputElement sldG = querySelector('#sld-g');
-  sldG.onChange.listen((e)=> cG = int.parse( sldG.value ));
+  sldG.onChange.listen((e) => cG = int.parse(sldG.value));
   InputElement sldB = querySelector('#sld-b');
-  sldB.onChange.listen((e)=> cB = int.parse( sldB.value ));
+  sldB.onChange.listen((e) => cB = int.parse(sldB.value));
   btClose.onClick.listen((MouseEvent e) => toggleMenu());
   btOpen.onClick.listen((MouseEvent e) => toggleMenu());
 }
@@ -94,7 +110,7 @@ bool isMenuVisible = false;
 
 void toggleMenu() {
   menu.style.display = isMenuVisible ? 'none' : 'flex';
-  btOpen.style.display = isMenuVisible ? 'block': 'none' ;
+  btOpen.style.display = isMenuVisible ? 'block' : 'none';
   isMenuVisible = !isMenuVisible;
 }
 
@@ -118,7 +134,7 @@ initPage() {
 
 onCaptureClick(MouseEvent e) {
   //if( e.target != menu && ! menu.childNodes.contains(e.target) && ! menu.children.contains(e.target) )
-  if( e.target == svg || svg.childNodes.contains(e.target))
+  if (e.target == svg || svg.childNodes.contains(e.target))
     capture();
 }
 
@@ -128,7 +144,6 @@ onCaptureTimer(Timer t) {
 
 capture() {
   //print('capture... ');
-  if (BLUR) blur();
   svgToCanvas(svg, canvas);
 }
 
@@ -175,7 +190,7 @@ PolygonElement getPolygon(Circle c1_0, Circle c1_1) {
   var ptsChain = circles2PathPoints([c0_0, c1_0, c1_1, c0_1]);
   polygonsPts.add(ptsChain);
 
-  var polygon = getPointsPolygon(ptsChain);
+  PolygonElement polygon = getPointsPolygon(ptsChain);
   circlePolygones[[c0_0, c1_0, c1_1, c0_1]] = polygon;
   return polygon;
 }
@@ -184,7 +199,7 @@ void drawLines(num value) {
   filterPoints(pts0).forEach((c) => c.fall());
   filterPoints(pts1).forEach((c) => c.fall());
 
-  print("${pts0.length} ${pts1.length}");
+  //print("${pts0.length} ${pts1.length}");
 
   rmOutLines(lines, lLimit);
 
@@ -240,10 +255,14 @@ List<Circle> filterPoints(List<Circle> pts) {
 
 void updatePolygons() {
   var opacity = DEFAULT_OPACITY;
-  num alphaCoef = 1 / circlePolygones.length / 3;
+  var numP = circlePolygones.length;
+  num alphaCoef = 1 / numP / 3;
   int currentColor = 0;
+  int counter = 0;
+  int blurCoef = (numP / 7).round();
 
   circlePolygones.forEach((List<Circle> pts, PolygonElement p) {
+    counter++;
     opacity += alphaCoef;
 
     updatePolygon(p, pts, LIVE_OPACITY ? opacity : DEFAULT_OPACITY);
@@ -257,11 +276,11 @@ void updatePolygons() {
       int g = (color >> 8) & 255;
       int b = color & 255;
       r += cR;
-      r = r > 255 ? 255:r;
+      r = r > 255 ? 255 : r;
       g += cG;
-      g = g > 255 ? 255:g;
+      g = g > 255 ? 255 : g;
       b += cB;
-      b = b > 255 ? 255:b;
+      b = b > 255 ? 255 : b;
       currentColor = r << 16 | g << 8 | b;
 
       //print('updatePolygons  fillCol.toRadixString(16) ${currentColor.toRadixString(16)}');
@@ -272,11 +291,35 @@ void updatePolygons() {
         final int strokeCol = currentColor;
         //final int strokeCol = M.min(2105376, currentColor);
         p.setAttribute(
-            'stroke', "#${fillHexa((strokeCol / 2).round().toRadixString(16))}");
+            'stroke',
+            "#${fillHexa((strokeCol / 2).round().toRadixString(16))}");
       }
     }
 
+    if( BLUR && counter < ( numP - 20 ) ){
+      /*V.FilterElement f = new V.FilterElement();
+      f.id = "B$counter";
+      var fBlur = new FEGaussianBlurElement();
+      fBlur.setAttribute("stdDeviation", '${(1 - ( counter / numP ))}') ;
+      f.append(fBlur);
+
+      var existingId = svg.children.where( ( SvgElement item ) => item.id == "B${counter}" );
+      if( existingId.isNotEmpty )
+        existingId.first.remove();
+      svg.append(f);
+        */
+
+      int level = ((counter / numP)*blurCoef).round();
+      level = level > 7 ? 7 : level;
+      print('updatePolygons » level ${level} / $numP');
+      p.style.filter = 'url(#blur$level)';
+
+      //int level = ((counter / numP)*blurCoef).round();
+      //p.style.filter = 'url(#blur$level)';
+    }
+
     if (LIVE_OPACITY) {
+
       p.setAttribute('fill-opacity', "$opacity");
       //p.setAttribute('stroke-opacity', "${opacity*1.2}");
       p.setAttribute('stroke-opacity', "0.1");
