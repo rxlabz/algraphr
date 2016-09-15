@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="blur_fast.js"></script>
+    <!--<script type="text/javascript" src="blur_fast.js"></script>-->
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
     <link rel="stylesheet" href="//code.getmdl.io/1.2.1/material.blue_grey-pink.min.css">
@@ -10,18 +10,41 @@
     
     <title>Algraphr</title>
     <link rel="stylesheet" href="styles.css">
-    <script type="text/javascript">
+    <!--<script type="text/javascript">
         function blur() {
             console.log('blur');
             boxBlurCanvasRGB('canvas', 0, 0, innerWidth, innerHeight, 2, 1);
         }
-    </script>
+    </script>-->
 </head>
 <body>
 <div id="container">
 
     <canvas id="canvas"></canvas>
-    <svg></svg>
+    <svg>
+        <filter id="blur1">
+            <feGaussianBlur stdDeviation="0.1"></feGaussianBlur>
+        </filter>
+        <filter id="blur2">
+            <feGaussianBlur stdDeviation="0.2"></feGaussianBlur>
+        </filter>
+        <filter id="blur3">
+            <feGaussianBlur stdDeviation="0.3"></feGaussianBlur>
+        </filter>
+        <filter id="blur4">
+            <feGaussianBlur stdDeviation="0.5"></feGaussianBlur>
+        </filter>
+
+        <filter id="blur5">
+            <feGaussianBlur stdDeviation="1.0"></feGaussianBlur>
+        </filter>
+        <filter id="blur6">
+            <feGaussianBlur stdDeviation="1.5"></feGaussianBlur>
+        </filter>
+        <filter id="blur7">
+            <feGaussianBlur stdDeviation="2"></feGaussianBlur>
+        </filter>
+    </svg>
 </div>
 <div id="menu">
     <a id="bt-close" href="#"><i class="material-icons md-18 std">clear</i></a>
@@ -50,6 +73,35 @@
             <span class="mdl-checkbox__label discrete">Auto-capture</span>
         </label>
     </div>
+
+    <div id="sld-captureFrqGp" class="row"><span>Freq</span>
+        <input id="sld-captureFrq" class="mdl-slider mdl-js-slider" type="range" min="100" max="2000" value="1000"></div>
+
+
+    <hr>
+
+    <div class="row">
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-blur">
+            <input type="checkbox" id="chk-blur" class="mdl-checkbox__input">
+            <span class="mdl-checkbox__label discrete">Pseudo Field Blur</span>
+        </label>
+    </div>
+
+    <!--
+
+    <div class="row">
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-capture">
+            <input type="checkbox" id="chk-capture" class="mdl-checkbox__input" >
+            <span class="mdl-checkbox__label discrete">Auto opacity</span>
+        </label>
+    </div>-->
+
+    <!--<div class="row">
+        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-capture">
+            <input type="checkbox" id="chk-capture" class="mdl-checkbox__input" >
+            <span class="mdl-checkbox__label discrete">Auto-capture</span>
+        </label>
+    </div>-->
 </div>
 <a id="bt-open" href="#"><i class="material-icons md-18 std">equalizer</i></a>
 <script>
