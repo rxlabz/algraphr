@@ -172,6 +172,3 @@ String fillHexa(String v) {
   //print('fillHexa » l.toString() ${_l.join('')}');
   return _l.join('');
 }
-
-@JS("blur")
-external void blur();
