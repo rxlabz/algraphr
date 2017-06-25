@@ -45,7 +45,7 @@ class Circle {
   String attr(String prop) => element.getAttribute(prop);
 
   num get y => cy;
-  M.Point get pt => new M.Point(num.parse(attr('cx'), (input)=>0), num.parse(attr('cy'), (input)=>0));
+  M.Point get pt => new M.Point(cx, cy);
 
 
   void set stroke(String color) {
@@ -54,7 +54,6 @@ class Circle {
 
   Circle({int radius: 5, String color: '#f0'}) {
     element = new CircleElement();
-    print("attr('cx') ${attr('cx')} ${attr('cy')} ");
   }
 
   Circle.fromElement(GeometryElement this.element);

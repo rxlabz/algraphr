@@ -98,10 +98,11 @@ void initMenu() {
   });
 
   InputElement sldR = querySelector('#sld-r');
-  sldR.onChange.listen((e) {
+  sldR.onInput.listen((e) {
     print('cR $cR');
     cR = int.parse(sldR.value);
   });
+
   InputElement sldG = querySelector('#sld-g');
   sldG.onChange.listen((e) => cG = int.parse(sldG.value));
   InputElement sldB = querySelector('#sld-b');
