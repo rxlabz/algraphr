@@ -43,6 +43,8 @@ Timer timer;
 DivElement menu;
 AnchorElement btClose;
 AnchorElement btOpen;
+AnchorElement btSave;
+CanvasRenderingContext2D context;
 
 CheckboxInputElement chkCapture;
 CheckboxInputElement chkBlur;
@@ -81,12 +83,10 @@ void initMenu() {
   btClose = querySelector('#bt-close');
   btOpen = querySelector('#bt-open');
 
-  chkCapture = querySelector('#chk-capture')..onChange.listen((e)=>
-    updateAutoCapture(chkCapture.checked)
-  );
-  chkBlur = querySelector('#chk-blur')..onChange.listen((e)=>
-      BLUR = chkBlur.checked
-  );
+  chkCapture = querySelector('#chk-capture')
+    ..onChange.listen((e) => updateAutoCapture(chkCapture.checked));
+  chkBlur = querySelector('#chk-blur')
+    ..onChange.listen((e) => BLUR = chkBlur.checked);
 
   sldCaptureFrq = querySelector('#sld-captureFrq');
   sldCaptureFrq.onChange.listen((e) {
@@ -104,9 +104,18 @@ void initMenu() {
   sldB.onChange.listen((e) => cB = int.parse(sldB.value));
   btClose.onClick.listen((MouseEvent e) => toggleMenu());
   btOpen.onClick.listen((MouseEvent e) => toggleMenu());
+  btSave = querySelector('#btSave')
+    ..onClick.listen((MouseEvent e) => saveImg());
 }
 
-bool isMenuVisible = false;
+saveImg() {
+  btSave.download = 'image.png';
+  btSave.href = canvasToImage("#202020");
+  //btSave.href = canvas.toDataUrl("image/png".replaceFirst(
+  //    new RegExp(r"^data:image/[^;]"), 'data:application/octet-stream'));
+}
+
+bool isMenuVisible = true;
 
 void toggleMenu() {
   menu.style.display = isMenuVisible ? 'none' : 'flex';
@@ -116,16 +125,21 @@ void toggleMenu() {
 
 initPage() {
   canvas = querySelector("canvas")
-    ..setAttribute('width', '${window.innerWidth}px')..setAttribute(
-        'height', '${window.innerHeight /*- 60*/}px');
+    ..setAttribute('width', '${window.innerWidth}px')
+    ..setAttribute('height', '${window.innerHeight /*- 60*/}px')
+    ..style.backgroundColor = "#202020";
+  context = canvas.context2D;
+  //canvas.context2D.fillRect(0,0, window.innerWidth, window.);
 
   svg = querySelector("svg")
-    ..setAttribute('width', '${window.innerWidth}px')..setAttribute(
-        'height', '${window.innerHeight /*- 60*/}px');
-
-  querySelector('body')
+    ..setAttribute('width', '${window.innerWidth}px')
+    ..setAttribute('height', '${window.innerHeight /*- 60*/}px')
     ..onMouseMove.listen(onMMove)
     ..onClick.listen(onCaptureClick);
+
+  /*querySelector('body')
+    ..onMouseMove.listen(onMMove)
+    ..onClick.listen(onCaptureClick);*/
 
   H = window.innerHeight;
   cLimit = H - CIRCLE_BOTTOM_LIMIT;
@@ -133,9 +147,9 @@ initPage() {
 }
 
 onCaptureClick(MouseEvent e) {
+  print('onCaptureClick...  ');
   //if( e.target != menu && ! menu.childNodes.contains(e.target) && ! menu.children.contains(e.target) )
-  if (e.target == svg || svg.childNodes.contains(e.target))
-    capture();
+  if (e.target == svg || svg.childNodes.contains(e.target)) capture();
 }
 
 onCaptureTimer(Timer t) {
@@ -156,7 +170,7 @@ void addPoints(int x, int y) {
       ? MAX_NUM_POLYGONS
       : M.max(MAX_DIST * 2 - ((pts0[pts0.length - 1].cx - x).abs() / 2), 1);
 
-  //creation des points pour position en cours
+  //creation des points+ pour position en cours
   var c1_0 = addCircle(new M.Point(x, y - dist), Position.Top);
   var c1_1 = addCircle(new M.Point(x, y + dist), Position.Bottom);
 
@@ -247,7 +261,7 @@ void updateLines(List<FallingCircle> pts) {
   });
 }
 
-List<Circle> filterPoints(List<Circle> pts) {
+List<FallingCircle> filterPoints(List<FallingCircle> pts) {
   /*if(! pts.isEmpty)
     print('filterPoints  c.cy ${pts[0].cy}');*/
   return pts.where((c) => c.cy < cLimit).toList();
@@ -290,22 +304,21 @@ void updatePolygons() {
       if (LIVING_STROKE) {
         final int strokeCol = currentColor;
         //final int strokeCol = M.min(2105376, currentColor);
-        p.setAttribute(
-            'stroke',
+        p.setAttribute('stroke',
             "#${fillHexa((strokeCol / 2).round().toRadixString(16))}");
       }
     }
 
-    if( BLUR && counter < ( numP - 20 ) ){
+    if (BLUR && counter < (numP - 20)) {
       V.FilterElement f = new V.FilterElement();
       f.id = "B$counter";
       var fBlur = new FEGaussianBlurElement();
-      fBlur.setAttribute("stdDeviation", '${(1 - ( counter / numP ))}') ;
+      fBlur.setAttribute("stdDeviation", '${(1 - ( counter / numP ))}');
       f.append(fBlur);
 
-      var existingId = svg.children.where( ( SvgElement item ) => item.id == "B${counter}" );
-      if( existingId.isNotEmpty )
-        existingId.first.remove();
+      var existingId =
+          svg.children.where((Element item) => item.id == "B${counter}");
+      if (existingId.isNotEmpty) existingId.first.remove();
       svg.append(f);
 
       /*int level = ((counter / numP)*blurCoef).round();
@@ -318,11 +331,45 @@ void updatePolygons() {
     }
 
     if (LIVE_OPACITY) {
-
       p.setAttribute('fill-opacity', "$opacity");
       //p.setAttribute('stroke-opacity', "${opacity*1.2}");
       p.setAttribute('stroke-opacity', "0.1");
     }
     //p.setAttribute('fill', "#${newFill.toRadixString(16)}" );
   });
+}
+
+String canvasToImage(backgroundColor) {
+  num w = canvas.width;
+  num h = canvas.height;
+
+
+  ImageData data = context.getImageData(0, 0, w, h);
+
+  //store the current globalCompositeOperation
+  String compositeOperation = context.globalCompositeOperation;
+
+  //set to draw behind current content
+  context.globalCompositeOperation = "destination-over";
+
+  //set background color
+  context.fillStyle = backgroundColor;
+
+  //draw background / rect on entire canvas
+  context.fillRect(0, 0, w, h);
+
+  //get the image data from the canvas
+  var imageData = canvas.toDataUrl("image/png");
+
+  //clear the canvas
+  context.clearRect(0, 0, w, h);
+
+  //restore it with original / cached ImageData
+  context.putImageData(data, 0, 0);
+
+  //reset the globalCompositeOperation to what it was
+  context.globalCompositeOperation = compositeOperation;
+
+  //return the Base64 encoded data url string
+  return imageData;
 }

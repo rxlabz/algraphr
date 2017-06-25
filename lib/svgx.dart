@@ -1,12 +1,8 @@
-@JS()
-library svgx;
-
-import 'package:js/js.dart';
 import 'dart:html';
 import 'dart:html' as dom;
+import 'dart:math' as M;
 import 'dart:svg';
 import 'dart:svg' as V;
-import 'dart:math' as M;
 
 const int R = 1;
 
@@ -44,12 +40,13 @@ class Circle {
     update('cy', '${cy.round()}px');
   }
 
-  num get y => cy;
-
-  M.Point get pt => new M.Point(attr('cx'), attr('cy'));
-
   update(String prop, dynamic value) => element.setAttribute(prop, value);
+
   String attr(String prop) => element.getAttribute(prop);
+
+  num get y => cy;
+  M.Point get pt => new M.Point(num.parse(attr('cx'), (input)=>0), num.parse(attr('cy'), (input)=>0));
+
 
   void set stroke(String color) {
     element.setAttribute('stroke', color);
@@ -57,6 +54,7 @@ class Circle {
 
   Circle({int radius: 5, String color: '#f0'}) {
     element = new CircleElement();
+    print("attr('cx') ${attr('cx')} ${attr('cy')} ");
   }
 
   Circle.fromElement(GeometryElement this.element);
@@ -126,8 +124,9 @@ updatePolygon(PolygonElement p, List<Circle> pts, [num opacity]) {
 rmOutLines(List<LineElement> lines, int limit) {
   lines
       .where((l) =>
-          ( M.max(double.parse(attr(l, 'y2')), double.parse(attr(l, 'y1'))) >=
-          limit) || (attr(l, 'y2') == attr(l, 'y1')))
+          (M.max(double.parse(attr(l, 'y2')), double.parse(attr(l, 'y1'))) >=
+              limit) ||
+          (attr(l, 'y2') == attr(l, 'y1')))
       .forEach((l) => l.remove());
 }
 
@@ -147,7 +146,7 @@ void svgToCanvas(SvgElement svgElement, CanvasElement canvas) {
   img.onLoad.listen((e) => context.drawImage(img, 0, 0));
   img.src = url;
 
-  Url.revokeObjectUrl(svg.toString());
+  //Url.revokeObjectUrl(svg.toString());
 }
 
 Blob svgToUrl(SvgElement svgElement, int w, int h) {

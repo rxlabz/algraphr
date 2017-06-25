@@ -8,6 +8,10 @@ html, body {
     box-sizing: border-box;
 }
 
+svg{
+    background: rgba(0.5 0.5 0.5 0.01);
+}
+
 *, *:before, *:after {
     box-sizing: inherit;
 }
@@ -45,6 +49,10 @@ svg, canvas {
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.std { color: #607D8B; }
 
+#menu .mdl-checkbox__box-outline{
+
+    border: 2px solid rgba(100,100,100,1);
+}
 
 #menu {
     /*display: none;*/
@@ -64,8 +72,11 @@ svg, canvas {
     font-size: 1.4rem;
 }
 
-#menu h3{
+#menu h2{
     font-size: 1.1rem;
+    line-height: 1.5rem;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 #bt-open, #bt-close {
