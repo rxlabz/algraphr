@@ -139,6 +139,7 @@ initPage() {
   svg = querySelector("svg")
     ..setAttribute('width', '${window.innerWidth}px')
     ..setAttribute('height', '${window.innerHeight /*- 60*/}px')
+    ..onTouchMove.listen(onTMove)
     ..onMouseMove.listen(onMMove)
     ..onClick.listen(onCaptureClick)
     ..onTouchStart.listen(onCaptureClick);
@@ -167,6 +168,9 @@ capture() {
   svgToCanvas(svg, canvas);
 }
 
+onTMove(TouchEvent e) {
+  addPoints(e.touches.first.client.x, e.touches.first.client.y);
+}
 onMMove(MouseEvent e) {
   addPoints(e.client.x, e.client.y);
 }
