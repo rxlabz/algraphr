@@ -104,9 +104,9 @@ void initMenu() {
   });
 
   InputElement sldG = querySelector('#sld-g');
-  sldG.onChange.listen((e) => cG = int.parse(sldG.value));
+  sldG.onInput.listen((e) => cG = int.parse(sldG.value));
   InputElement sldB = querySelector('#sld-b');
-  sldB.onChange.listen((e) => cB = int.parse(sldB.value));
+  sldB.onInput.listen((e) => cB = int.parse(sldB.value));
   btClose.onClick.listen((MouseEvent e) => toggleMenu());
   btOpen.onClick.listen((MouseEvent e) => toggleMenu());
   btSave = querySelector('#btSave')
