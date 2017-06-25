@@ -140,7 +140,8 @@ initPage() {
     ..setAttribute('width', '${window.innerWidth}px')
     ..setAttribute('height', '${window.innerHeight /*- 60*/}px')
     ..onMouseMove.listen(onMMove)
-    ..onClick.listen(onCaptureClick);
+    ..onClick.listen(onCaptureClick)
+    ..onTouchStart.listen(onCaptureClick);
 
   /*querySelector('body')
     ..onMouseMove.listen(onMMove)
@@ -151,7 +152,7 @@ initPage() {
   lLimit = H - LINE_BOTTOM_LIMIT;
 }
 
-onCaptureClick(MouseEvent e) {
+onCaptureClick(Event e) {
   print('onCaptureClick...  ');
   //if( e.target != menu && ! menu.childNodes.contains(e.target) && ! menu.children.contains(e.target) )
   if (e.target == svg || svg.childNodes.contains(e.target)) capture();
@@ -162,7 +163,7 @@ onCaptureTimer(Timer t) {
 }
 
 capture() {
-  //print('capture... ');
+  print('capture... ');
   svgToCanvas(svg, canvas);
 }
 

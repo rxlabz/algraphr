@@ -142,7 +142,10 @@ void svgToCanvas(SvgElement svgElement, CanvasElement canvas) {
   final svg = svgToUrl(svgElement, wW, wH);
   final url = Url.createObjectUrl(svg);
 
-  img.onLoad.listen((e) => context.drawImage(img, 0, 0));
+  img.onLoad.listen((e) {
+    print('img onload...');
+    context.drawImage(img, 0, 0);
+  });
   img.src = url;
 
   //Url.revokeObjectUrl(svg.toString());
@@ -150,7 +153,8 @@ void svgToCanvas(SvgElement svgElement, CanvasElement canvas) {
 
 Blob svgToUrl(SvgElement svgElement, int w, int h) {
   var svgValue = toSVGBloc(svgElement.innerHtml, w, h);
-  return new Blob([svgValue], 'image/svg+xml;charset=utf-8');
+  print('SVG: $svgValue');
+  return new Blob([svgValue], 'image/svg+xml');
 }
 
 String toSVGBloc(String svg, int width, int height) =>
