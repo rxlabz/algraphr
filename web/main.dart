@@ -99,8 +99,8 @@ void initMenu() {
 
   InputElement sldR = querySelector('#sld-r');
   sldR.onChange.listen((e) {
-    cR = int.parse(sldR.value);
     print('cR $cR');
+    cR = int.parse(sldR.value);
   });
   InputElement sldG = querySelector('#sld-g');
   sldG.onChange.listen((e) => cG = int.parse(sldG.value));
