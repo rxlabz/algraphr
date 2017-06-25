@@ -69,6 +69,7 @@ void main() {
 }
 
 void updateAutoCapture(bool on) {
+  print('updateAutoCapture $on');
   if (on)
     timer = new Timer.periodic(
         new Duration(milliseconds: capture_frequency), onCaptureTimer);
@@ -97,7 +98,10 @@ void initMenu() {
   });
 
   InputElement sldR = querySelector('#sld-r');
-  sldR.onChange.listen((e) => cR = int.parse(sldR.value));
+  sldR.onChange.listen((e) {
+    cR = int.parse(sldR.value);
+    print('cR $cR');
+  });
   InputElement sldG = querySelector('#sld-g');
   sldG.onChange.listen((e) => cG = int.parse(sldG.value));
   InputElement sldB = querySelector('#sld-b');
