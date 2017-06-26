@@ -58,6 +58,7 @@ svg, canvas {
 #menu {
     /*display: none;*/
     flex-direction: column;
+    align-items: stretch;
     background-color: #1A1A1A;
     height: 100%;
     position: absolute;
@@ -67,6 +68,12 @@ svg, canvas {
     padding-left: 10px;
     color:#888;
     font-size: 0.8rem;
+}
+
+.expand{
+    flex-grow: 2;
+    background: orange;
+    align-content: flex-end;
 }
 
 #menu h1{

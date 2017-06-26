@@ -35,7 +35,6 @@ class Circle {
   double cy = 0.0;
 
   set y(num value) {
-    //print('Circle.y  value ${value}');
     cy = value;
     update('cy', '${cy.round()}px');
   }
@@ -106,7 +105,6 @@ getLine(M.Point p1, M.Point p2) => new LineElement()
 
 getPointsPolygon(String pts) => new PolygonElement()
   ..setAttribute('stroke', "#333333")
-  /*..setAttribute('stroke', DEFAULT_COLOR)*/
   ..setAttribute('fill', '#00ff00')
   ..setAttribute('points', pts);
 
@@ -142,18 +140,12 @@ void svgToCanvas(SvgElement svgElement, CanvasElement canvas) {
   final svg = svgToUrl(svgElement, wW, wH);
   final url = Url.createObjectUrl(svg);
 
-  img.onLoad.listen((e) {
-    print('img onload...');
-    context.drawImage(img, 0, 0);
-  });
+  img.onLoad.listen((e) => context.drawImage(img, 0, 0));
   img.src = url;
-
-  //Url.revokeObjectUrl(svg.toString());
 }
 
 Blob svgToUrl(SvgElement svgElement, int w, int h) {
   var svgValue = toSVGBloc(svgElement.innerHtml, w, h);
-  print('SVG: $svgValue');
   return new Blob([svgValue], 'image/svg+xml');
 }
 
@@ -170,8 +162,6 @@ String fillHexa(String v) {
   int num = 6 - v.length;
   if (num <= 0) return v;
   var l = new List(num)..fillRange(0, num, '0');
-  //print('l   ${l.length}');
   var _l = l.map((o) => o).toList()..add(v);
-  //print('fillHexa » l.toString() ${_l.join('')}');
   return _l.join('');
 }

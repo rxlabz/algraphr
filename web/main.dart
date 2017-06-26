@@ -6,21 +6,22 @@ import 'dart:svg' as V;
 
 import 'package:algraphr/svgx.dart';
 
-const bool AUTO_CAPTURE = false;
+const kBackgroundColor = "#202020";
+const bool kAutoCapture = false;
 
-const bool LIVING_FILL = true;
-const bool LIVING_STROKE = false;
-const bool LIVE_OPACITY = false;
-bool BLUR = false;
+const bool kLivingFill = true;
+const bool kLivingStroke = false;
+const bool kLiveOpacity = false;
 
-const int MAX_DIST = 16;
-const int LINE_BOTTOM_LIMIT = 100;
-const int CIRCLE_BOTTOM_LIMIT = 30;
-const int MAX_NUM_POLYGONS = 64;
+const int kMaxDist = 16;
+const int kLineBottomLimit = 100;
+const int kCircleBottomLimit = 30;
+const int kMaxNumPolygons = 64;
 
-const double DEFAULT_OPACITY = 0.0;
-const double OPACITY_STEP = 0.004;
+const double kDefaultOpacity = 0.0;
+const double kOpacityStep = 0.004;
 
+bool blurEnabled = false;
 CanvasElement canvas;
 
 SvgElement svg;
@@ -61,7 +62,7 @@ void main() {
   initPage();
   initMenu();
 
-  if (AUTO_CAPTURE)
+  if (kAutoCapture)
     timer = new Timer.periodic(
         new Duration(milliseconds: capture_frequency), onCaptureTimer);
 
@@ -69,7 +70,6 @@ void main() {
 }
 
 void updateAutoCapture(bool on) {
-  print('updateAutoCapture $on');
   if (on)
     timer = new Timer.periodic(
         new Duration(milliseconds: capture_frequency), onCaptureTimer);
@@ -81,13 +81,17 @@ void updateAutoCapture(bool on) {
 
 void initMenu() {
   menu = querySelector('#menu');
-  btClose = querySelector('#bt-close');
-  btOpen = querySelector('#bt-open');
+  btClose = querySelector('#bt-close')
+    ..onClick.listen((MouseEvent e) => toggleMenu());
+  btOpen = querySelector('#bt-open')
+    ..onClick.listen((MouseEvent e) => toggleMenu());
+  btSave = querySelector('#btSave')
+    ..onClick.listen((MouseEvent e) => saveImg());
 
   chkCapture = querySelector('#chk-capture')
     ..onChange.listen((e) => updateAutoCapture(chkCapture.checked));
-  chkBlur = querySelector('#chk-blur')
-    ..onChange.listen((e) => BLUR = chkBlur.checked);
+  /*chkBlur = querySelector('#chk-blur')
+    ..onChange.listen((e) => BLUR = chkBlur.checked);*/
 
   sldCaptureFrq = querySelector('#sld-captureFrq');
   sldCaptureFrq.onChange.listen((e) {
@@ -98,26 +102,16 @@ void initMenu() {
   });
 
   InputElement sldR = querySelector('#sld-r');
-  sldR.onInput.listen((e) {
-    print('cR $cR');
-    cR = int.parse(sldR.value);
-  });
-
+  sldR.onInput.listen((e) => cR = int.parse(sldR.value));
   InputElement sldG = querySelector('#sld-g');
   sldG.onInput.listen((e) => cG = int.parse(sldG.value));
   InputElement sldB = querySelector('#sld-b');
   sldB.onInput.listen((e) => cB = int.parse(sldB.value));
-  btClose.onClick.listen((MouseEvent e) => toggleMenu());
-  btOpen.onClick.listen((MouseEvent e) => toggleMenu());
-  btSave = querySelector('#btSave')
-    ..onClick.listen((MouseEvent e) => saveImg());
 }
 
 saveImg() {
   btSave.download = 'image.png';
   btSave.href = canvasToImage("#202020");
-  //btSave.href = canvas.toDataUrl("image/png".replaceFirst(
-  //    new RegExp(r"^data:image/[^;]"), 'data:application/octet-stream'));
 }
 
 bool isMenuVisible = true;
@@ -129,12 +123,12 @@ void toggleMenu() {
 }
 
 initPage() {
+
   canvas = querySelector("canvas")
     ..setAttribute('width', '${window.innerWidth}px')
-    ..setAttribute('height', '${window.innerHeight /*- 60*/}px')
-    ..style.backgroundColor = "#202020";
+    ..setAttribute('height', '${window.innerHeight}px')
+    ..style.backgroundColor = kBackgroundColor;
   context = canvas.context2D;
-  //canvas.context2D.fillRect(0,0, window.innerWidth, window.);
 
   svg = querySelector("svg")
     ..setAttribute('width', '${window.innerWidth}px')
@@ -149,13 +143,11 @@ initPage() {
     ..onClick.listen(onCaptureClick);*/
 
   H = window.innerHeight;
-  cLimit = H - CIRCLE_BOTTOM_LIMIT;
-  lLimit = H - LINE_BOTTOM_LIMIT;
+  cLimit = H - kCircleBottomLimit;
+  lLimit = H - kLineBottomLimit;
 }
 
 onCaptureClick(Event e) {
-  print('onCaptureClick...  ');
-  //if( e.target != menu && ! menu.childNodes.contains(e.target) && ! menu.children.contains(e.target) )
   if (e.target == svg || svg.childNodes.contains(e.target)) capture();
 }
 
@@ -164,34 +156,34 @@ onCaptureTimer(Timer t) {
 }
 
 capture() {
-  print('capture... ');
   svgToCanvas(svg, canvas);
 }
 
 onTMove(TouchEvent e) {
   addPoints(e.touches.first.client.x, e.touches.first.client.y);
 }
+
 onMMove(MouseEvent e) {
   addPoints(e.client.x, e.client.y);
 }
 
 void addPoints(int x, int y) {
   var dist = pts0.isEmpty
-      ? MAX_NUM_POLYGONS
-      : M.max(MAX_DIST * 2 - ((pts0[pts0.length - 1].cx - x).abs() / 2), 1);
+      ? kMaxNumPolygons
+      : M.max(kMaxDist * 2 - ((pts0[pts0.length - 1].cx - x).abs() / 2), 1);
 
   //creation des points+ pour position en cours
-  var c1_0 = addCircle(new M.Point(x, y - dist), Position.Top);
-  var c1_1 = addCircle(new M.Point(x, y + dist), Position.Bottom);
+  var c1_0 = addDerivedPoints(new M.Point(x, y - dist), Position.Top);
+  var c1_1 = addDerivedPoints(new M.Point(x, y + dist), Position.Bottom);
 
-  // si ce d'autres points existent » creation et affichage du polygone correspondant
+  // si d'autres points existent » creation et affichage du polygone correspondant
   if (pts0.length > 1 && pts1.length > 1) {
     final polygon = getPolygon(c1_0, c1_1);
     svg.append(polygon);
   }
 }
 
-Circle addCircle(M.Point p, Position pos) {
+Circle addDerivedPoints(M.Point p, Position pos) {
   final c = new FallingCircle.fromElement(getCircle(p));
   svg.append(c.element);
   c.start();
@@ -222,8 +214,6 @@ PolygonElement getPolygon(Circle c1_0, Circle c1_1) {
 void drawLines(num value) {
   filterPoints(pts0).forEach((c) => c.fall());
   filterPoints(pts1).forEach((c) => c.fall());
-
-  //print("${pts0.length} ${pts1.length}");
 
   rmOutLines(lines, lLimit);
 
@@ -265,20 +255,16 @@ void updateLines(List<FallingCircle> pts) {
       if (pts.indexOf(c) > 0) {
         FallingCircle c0 = pts[pts.indexOf(c) - 1]; // previous points
         lineToPoints(circleLines[c], c0, c);
-        //circleLines[c].setAttribute('stroke', DEFAULT_COLOR);
       }
     }
   });
 }
 
-List<FallingCircle> filterPoints(List<FallingCircle> pts) {
-  /*if(! pts.isEmpty)
-    print('filterPoints  c.cy ${pts[0].cy}');*/
-  return pts.where((c) => c.cy < cLimit).toList();
-}
+List<FallingCircle> filterPoints(List<FallingCircle> pts) =>
+    pts.where((c) => c.cy < cLimit).toList();
 
 void updatePolygons() {
-  var opacity = DEFAULT_OPACITY;
+  var opacity = kDefaultOpacity;
   var numP = circlePolygones.length;
   num alphaCoef = 1 / numP / 3;
   int currentColor = 0;
@@ -289,9 +275,9 @@ void updatePolygons() {
     counter++;
     opacity += alphaCoef;
 
-    updatePolygon(p, pts, LIVE_OPACITY ? opacity : DEFAULT_OPACITY);
+    updatePolygon(p, pts, kLiveOpacity ? opacity : kDefaultOpacity);
 
-    if (LIVING_FILL) {
+    if (kLivingFill) {
       // recup couleur courante : String currentFill = p.getAttribute('fill');
 
       // linear rgb
@@ -307,19 +293,17 @@ void updatePolygons() {
       b = b > 255 ? 255 : b;
       currentColor = r << 16 | g << 8 | b;
 
-      //print('updatePolygons  fillCol.toRadixString(16) ${currentColor.toRadixString(16)}');
       p.setAttribute('fill', "#${fillHexa(currentColor.toRadixString(16))}");
 
       // stroke
-      if (LIVING_STROKE) {
+      if (kLivingStroke) {
         final int strokeCol = currentColor;
-        //final int strokeCol = M.min(2105376, currentColor);
         p.setAttribute('stroke',
             "#${fillHexa((strokeCol / 2).round().toRadixString(16))}");
       }
     }
 
-    if (BLUR && counter < (numP - 20)) {
+    if (blurEnabled && counter < (numP - 20)) {
       V.FilterElement f = new V.FilterElement();
       f.id = "B$counter";
       var fBlur = new FEGaussianBlurElement();
@@ -340,19 +324,17 @@ void updatePolygons() {
       //p.style.filter = 'url(#blur$level)';
     }
 
-    if (LIVE_OPACITY) {
+    if (kLiveOpacity) {
       p.setAttribute('fill-opacity', "$opacity");
-      //p.setAttribute('stroke-opacity', "${opacity*1.2}");
       p.setAttribute('stroke-opacity', "0.1");
     }
-    //p.setAttribute('fill', "#${newFill.toRadixString(16)}" );
   });
 }
 
-String canvasToImage(backgroundColor) {
+/// saves a canvas to png, add the backgroundColor
+String canvasToImage(String backgroundColor) {
   num w = canvas.width;
   num h = canvas.height;
-
 
   ImageData data = context.getImageData(0, 0, w, h);
 

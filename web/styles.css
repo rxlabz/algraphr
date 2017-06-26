@@ -38,7 +38,7 @@ svg, canvas {
 .col{
     display: flex;
     flex-direction: column;
-    /*align-content: center;*/
+    align-content: flex-end;
 }
 
 .discrete{
@@ -56,7 +56,7 @@ svg, canvas {
 }
 
 #menu {
-    /*display: none;*/
+    display: flex;
     flex-direction: column;
     background-color: #1A1A1A;
     height: 100%;
@@ -67,8 +67,18 @@ svg, canvas {
     padding-left: 10px;
     color:#888;
     font-size: 0.8rem;
+    /*align-items: flex-end;*/
 }
 
+.expand{
+    align-items: flex-end;
+    flex-grow: 2;
+    align-self: flex-end;
+}
+
+.expand a{
+    color: #607D8B;
+}
 #menu h1{
     font-size: 1.2rem;
 }
@@ -88,6 +98,10 @@ svg, canvas {
 
 #bt-open{
     display: none;
+}
+
+.btLink{
+    text-decoration: none;
 }
 
 #sld-captureFrqGp{
