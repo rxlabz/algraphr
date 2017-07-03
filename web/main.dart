@@ -151,7 +151,7 @@ initPage() {
     ..onClick.listen(onCaptureClick)
     ..onTouchStart.listen(onCaptureClick)
     ..onKeyPress
-        .listen((e) => e.keyCode == KeyCode.SPACE ? capture() : print(''));
+        .listen((e) => e.keyCode == KeyCode.SPACE ? capture() : print('other'));
 
   H = window.innerHeight;
   cLimit = H - kCircleBottomLimit;
