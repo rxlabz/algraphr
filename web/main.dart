@@ -130,7 +130,6 @@ void toggleMenu() {
 }
 
 initPage() {
-
   canvas = querySelector("canvas")
     ..setAttribute('width', '${canvasWidth}px')
     ..setAttribute('height', '${canvasHeight}px')
@@ -138,12 +137,14 @@ initPage() {
   context = canvas.context2D;
 
   svg = querySelector("svg")
-    ..setAttribute('width', '${canvasWidth}px')
-    ..setAttribute('height', '${canvasHeight /*- 60*/}px')
-    ..onTouchMove.listen(onTMove)
-    ..onMouseMove.listen(onMMove)
-    ..onClick.listen(onCaptureClick)
-    ..onTouchStart.listen(onCaptureClick);
+        ..setAttribute('width', '${canvasWidth}px')
+        ..setAttribute('height', '${canvasHeight /*- 60*/}px')
+        ..onTouchMove.listen(onTMove)
+        ..onMouseMove.listen(onMMove)
+      /*..onClick.listen(onCaptureClick)
+    ..onTouchStart.listen(onCaptureClick)*/
+      ;
+  window..onClick.listen(onCaptureClick)..onTouchStart.listen(onCaptureClick);
 
   /*querySelector('body')
     ..onMouseMove.listen(onMMove)
@@ -155,6 +156,7 @@ initPage() {
 }
 
 void onCaptureClick(Event e) {
+  print("onCaptureClick");
   if (e.target == svg || svg.childNodes.contains(e.target)) capture();
 }
 

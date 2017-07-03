@@ -95,7 +95,7 @@ CircleElement getCircle(M.Point p,
     ..setAttribute('fill-opacity', '0.2');
 }
 
-getLine(M.Point p1, M.Point p2) => new LineElement()
+LineElement getLine(M.Point p1, M.Point p2) => new LineElement()
   ..setAttribute('stroke', '#FF0')
   ..setAttribute('stroke-width', LINE_WIDTH.toString())
   ..setAttribute('x1', '${p1.x}')
@@ -103,12 +103,12 @@ getLine(M.Point p1, M.Point p2) => new LineElement()
   ..setAttribute('y1', '${p1.y}')
   ..setAttribute('y2', '${p2.y}');
 
-getPointsPolygon(String pts) => new PolygonElement()
+PolygonElement getPointsPolygon(String pts) => new PolygonElement()
   ..setAttribute('stroke', "#333333")
   ..setAttribute('fill', '#00ff00')
   ..setAttribute('points', pts);
 
-lineToPoints(LineElement l, Circle c0, Circle c1) => l
+void lineToPoints(LineElement l, Circle c0, Circle c1) => l
   ..setAttribute('x1', '${c0.cx.roundToDouble() }px')
   ..setAttribute('y1', '${c0.cy.roundToDouble() - 1 }px')
   ..setAttribute('x2', '${c1.cx.roundToDouble() }px')
@@ -116,7 +116,7 @@ lineToPoints(LineElement l, Circle c0, Circle c1) => l
 
 updatePolygon(PolygonElement p, List<FallingCircle> pts, [num opacity]) {
   final points = circles2PathPoints(pts);
-  print('updatePolygon => points ${points}');
+  //print('updatePolygon => points ${points}');
   p.setAttribute('points', points);
 }
 
@@ -137,13 +137,13 @@ String rmpx(String value) => value.replaceFirst('px', '');
 void svgToCanvas(SvgElement svgElement, CanvasElement canvas) {
   final wW = window.innerWidth;
   final wH = window.innerHeight;
-  var img = new dom.ImageElement(width: wW, height: wH);
-  final CanvasRenderingContext2D context = canvas.getContext('2d');
   final svg = svgToUrl(svgElement, wW, wH);
   final url = Url.createObjectUrl(svg);
-
+  var img = new dom.ImageElement(width: wW, height: wH);
+  final CanvasRenderingContext2D context = canvas.getContext('2d');
   img.onLoad.listen((e) => context.drawImage(img, 0, 0));
   img.src = url;
+
 }
 
 Blob svgToUrl(SvgElement svgElement, int w, int h) {
