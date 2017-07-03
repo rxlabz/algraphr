@@ -45,6 +45,8 @@ DivElement menu;
 AnchorElement btClose;
 AnchorElement btOpen;
 AnchorElement btSave;
+AnchorElement btClear;
+
 CanvasRenderingContext2D context;
 
 CheckboxInputElement chkCapture;
@@ -57,6 +59,9 @@ int capture_frequency = 1000;
 int cR = 2;
 int cG = 2;
 int cB = 2;
+
+int get canvasWidth => window.innerWidth;
+int get canvasHeight => window.innerHeight;
 
 void main() {
   initPage();
@@ -87,6 +92,8 @@ void initMenu() {
     ..onClick.listen((MouseEvent e) => toggleMenu());
   btSave = querySelector('#btSave')
     ..onClick.listen((MouseEvent e) => saveImg());
+  btClear = querySelector('#btClear')
+    ..onClick.listen((MouseEvent e) => clear());
 
   chkCapture = querySelector('#chk-capture')
     ..onChange.listen((e) => updateAutoCapture(chkCapture.checked));
@@ -125,14 +132,14 @@ void toggleMenu() {
 initPage() {
 
   canvas = querySelector("canvas")
-    ..setAttribute('width', '${window.innerWidth}px')
-    ..setAttribute('height', '${window.innerHeight}px')
+    ..setAttribute('width', '${canvasWidth}px')
+    ..setAttribute('height', '${canvasHeight}px')
     ..style.backgroundColor = kBackgroundColor;
   context = canvas.context2D;
 
   svg = querySelector("svg")
-    ..setAttribute('width', '${window.innerWidth}px')
-    ..setAttribute('height', '${window.innerHeight /*- 60*/}px')
+    ..setAttribute('width', '${canvasWidth}px')
+    ..setAttribute('height', '${canvasHeight /*- 60*/}px')
     ..onTouchMove.listen(onTMove)
     ..onMouseMove.listen(onMMove)
     ..onClick.listen(onCaptureClick)
@@ -147,24 +154,28 @@ initPage() {
   lLimit = H - kLineBottomLimit;
 }
 
-onCaptureClick(Event e) {
+void onCaptureClick(Event e) {
   if (e.target == svg || svg.childNodes.contains(e.target)) capture();
 }
 
-onCaptureTimer(Timer t) {
+void onCaptureTimer(Timer t) {
   capture();
 }
 
-capture() {
-  svgToCanvas(svg, canvas);
-}
-
-onTMove(TouchEvent e) {
+void onTMove(TouchEvent e) {
   addPoints(e.touches.first.client.x, e.touches.first.client.y);
 }
 
-onMMove(MouseEvent e) {
+void onMMove(MouseEvent e) {
   addPoints(e.client.x, e.client.y);
+}
+
+void capture() {
+  svgToCanvas(svg, canvas);
+}
+
+void clear() {
+  context.clearRect(0, 0, canvasWidth, canvasHeight);
 }
 
 void addPoints(int x, int y) {
@@ -183,7 +194,7 @@ void addPoints(int x, int y) {
   }
 }
 
-Circle addDerivedPoints(M.Point p, Position pos) {
+FallingCircle addDerivedPoints(M.Point p, Position pos) {
   final c = new FallingCircle.fromElement(getCircle(p));
   svg.append(c.element);
   c.start();

@@ -114,8 +114,10 @@ lineToPoints(LineElement l, Circle c0, Circle c1) => l
   ..setAttribute('x2', '${c1.cx.roundToDouble() }px')
   ..setAttribute('y2', '${c1.cy.roundToDouble() + 2 }px');
 
-updatePolygon(PolygonElement p, List<Circle> pts, [num opacity]) {
-  p.setAttribute('points', circles2PathPoints(pts));
+updatePolygon(PolygonElement p, List<FallingCircle> pts, [num opacity]) {
+  final points = circles2PathPoints(pts);
+  print('updatePolygon => points ${points}');
+  p.setAttribute('points', points);
 }
 
 rmOutLines(List<LineElement> lines, int limit) {
@@ -153,7 +155,7 @@ String toSVGBloc(String svg, int width, int height) =>
     '''<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"${width}\"
      height=\"${height}\"> ${svg}</svg>''';
 
-circles2PathPoints(List<FallingCircle> els) => els.fold(
+String circles2PathPoints(List<FallingCircle> els) => els.fold(
     '',
     (String prv, FallingCircle c) =>
         prv += "${c.cx.roundToDouble()},${c.cy.roundToDouble()} ");
