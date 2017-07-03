@@ -161,6 +161,7 @@ String circles2PathPoints(List<FallingCircle> els) => els.fold(
         prv += "${c.cx.roundToDouble()},${c.cy.roundToDouble()} ");
 
 String fillHexa(String v) {
+  //if (v.length == 0) return v;
   int num = 6 - v.length;
   if (num <= 0) return v;
   var l = new List(num)..fillRange(0, num, '0');

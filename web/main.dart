@@ -21,14 +21,15 @@ const int kMaxNumPolygons = 64;
 const double kDefaultOpacity = 0.0;
 const double kOpacityStep = 0.004;
 
-bool blurEnabled = false;
 CanvasElement canvas;
 
 SvgElement svg;
 
 int cLimit;
 int lLimit;
-var H = window.innerHeight;
+int H = window.innerHeight;
+int W = window.innerWidth;
+bool blurEnabled = false;
 
 List<FallingCircle> pts0 = [];
 List<FallingCircle> pts1 = [];
@@ -60,10 +61,13 @@ int cR = 2;
 int cG = 2;
 int cB = 2;
 
-int get canvasWidth => window.innerWidth;
-int get canvasHeight => window.innerHeight;
+bool captureOn = true;
+
+//int get W => window.innerWidth;
+//int get H => window.innerHeight;
 
 void main() {
+  print('H $H / W $W ');
   initPage();
   initMenu();
 
@@ -85,7 +89,9 @@ void updateAutoCapture(bool on) {
 }
 
 void initMenu() {
-  menu = querySelector('#menu');
+  menu = querySelector('#menu')
+    ..onMouseOver.listen((e) => captureOn = false)
+    ..onMouseOut.listen((e) => captureOn = true);
   btClose = querySelector('#bt-close')
     ..onClick.listen((MouseEvent e) => toggleMenu());
   btOpen = querySelector('#bt-open')
@@ -131,28 +137,21 @@ void toggleMenu() {
 
 initPage() {
   canvas = querySelector("canvas")
-    ..setAttribute('width', '${canvasWidth}px')
-    ..setAttribute('height', '${canvasHeight}px')
+    ..setAttribute('width', '${W}px')
+    ..setAttribute('height', '${H}px')
     ..style.backgroundColor = kBackgroundColor;
   context = canvas.context2D;
 
   svg = querySelector("svg")
-        ..setAttribute('width', '${canvasWidth}px')
-        ..setAttribute('height', '${canvasHeight /*- 60*/}px')
-      /*..onTouchMove.listen(onTMove)
-        ..onMouseMove.listen(onMMove)*/
-      /*..onClick.listen(onCaptureClick)
-    ..onTouchStart.listen(onCaptureClick)*/
-      ;
+    ..setAttribute('width', '${W}px')
+    ..setAttribute('height', '${H /*- 60*/}px');
   window
     ..onTouchMove.listen(onTMove)
     ..onMouseMove.listen(onMMove)
     ..onClick.listen(onCaptureClick)
-    ..onTouchStart.listen(onCaptureClick);
-
-  /*querySelector('body')
-    ..onMouseMove.listen(onMMove)
-    ..onClick.listen(onCaptureClick);*/
+    ..onTouchStart.listen(onCaptureClick)
+    ..onKeyPress
+        .listen((e) => e.keyCode == KeyCode.SPACE ? capture() : print(''));
 
   H = window.innerHeight;
   cLimit = H - kCircleBottomLimit;
@@ -160,8 +159,9 @@ initPage() {
 }
 
 void onCaptureClick(Event e) {
-  print("onCaptureClick");
-  if (e.target == svg || svg.childNodes.contains(e.target)) capture();
+  print("onCaptureClick ${e.target}");
+  if (captureOn) capture();
+  //if (e.target == svg || svg.childNodes.contains(e.target)) capture();
 }
 
 void onCaptureTimer(Timer t) {
@@ -181,7 +181,7 @@ void capture() {
 }
 
 void clear() {
-  context.clearRect(0, 0, canvasWidth, canvasHeight);
+  context.clearRect(0, 0, W, H);
 }
 
 void addPoints(int x, int y) {
@@ -247,7 +247,7 @@ void drawLines(num value) {
 
 void filterPolygons(List<Circle> pts, Position pos) {
   var toRm = [];
-  pts.where((c) => c.cy >= cLimit).toList().forEach((c) {
+  pts.where((c) => c.cy.toInt() >= cLimit).toList().forEach((c) {
     // filtre les points visible
     c.element.remove();
 
@@ -260,10 +260,13 @@ void filterPolygons(List<Circle> pts, Position pos) {
       });
   });
 
+  if( toRm.length > 0 )
   toRm.forEach((pts) => circlePolygones.remove(pts));
 
   pts = filterPoints(pts);
   updateLines(pts);
+  if( toRm.length > 0)
+    print('toRM ${toRm.length} / ${circlePolygones.length}');
 }
 
 void updateLines(List<FallingCircle> pts) {
@@ -310,7 +313,8 @@ void updatePolygons() {
       b = b > 255 ? 255 : b;
       currentColor = r << 16 | g << 8 | b;
 
-      p.setAttribute('fill', "#${fillHexa(currentColor.toRadixString(16))}");
+      p.setAttribute('fill', "#${/*fillHexa(*/currentColor.toRadixString(16)/*)*/}");
+      //print(currentColor.toRadixString(16));
 
       // stroke
       if (kLivingStroke) {
