@@ -139,12 +139,16 @@ initPage() {
   svg = querySelector("svg")
         ..setAttribute('width', '${canvasWidth}px')
         ..setAttribute('height', '${canvasHeight /*- 60*/}px')
-        ..onTouchMove.listen(onTMove)
-        ..onMouseMove.listen(onMMove)
+      /*..onTouchMove.listen(onTMove)
+        ..onMouseMove.listen(onMMove)*/
       /*..onClick.listen(onCaptureClick)
     ..onTouchStart.listen(onCaptureClick)*/
       ;
-  window..onClick.listen(onCaptureClick)..onTouchStart.listen(onCaptureClick);
+  window
+    ..onTouchMove.listen(onTMove)
+    ..onMouseMove.listen(onMMove)
+    ..onClick.listen(onCaptureClick)
+    ..onTouchStart.listen(onCaptureClick);
 
   /*querySelector('body')
     ..onMouseMove.listen(onMMove)
