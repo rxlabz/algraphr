@@ -61,21 +61,23 @@ int cR = 2;
 int cG = 2;
 int cB = 2;
 
+
+bool isMenuVisible = true;
+
 bool captureOn = true;
-
-//int get W => window.innerWidth;
-//int get H => window.innerHeight;
-
 void main() {
-  print('H $H / W $W ');
+  //print('H $H / W $W ');
   initPage();
   initMenu();
+  initAutoCapture();
 
+  window.animationFrame.then(drawLines);
+}
+
+void initAutoCapture() {
   if (kAutoCapture)
     timer = new Timer.periodic(
         new Duration(milliseconds: capture_frequency), onCaptureTimer);
-
-  window.animationFrame.then(drawLines);
 }
 
 void updateAutoCapture(bool on) {
@@ -122,12 +124,6 @@ void initMenu() {
   sldB.onInput.listen((e) => cB = int.parse(sldB.value));
 }
 
-saveImg() {
-  btSave.download = 'image.png';
-  btSave.href = canvasToImage("#202020");
-}
-
-bool isMenuVisible = true;
 
 void toggleMenu() {
   menu.style.display = isMenuVisible ? 'none' : 'flex';
@@ -158,8 +154,14 @@ initPage() {
   lLimit = H - kLineBottomLimit;
 }
 
+
+saveImg() {
+  btSave.download = 'image.png';
+  btSave.href = canvasToImage("#202020");
+}
+
+
 void onCaptureClick(Event e) {
-  print("onCaptureClick ${e.target}");
   if (captureOn) capture();
   //if (e.target == svg || svg.childNodes.contains(e.target)) capture();
 }
@@ -184,17 +186,27 @@ void clear() {
   context.clearRect(0, 0, W, H);
 }
 
+List<M.Point> allPoints = [];
+
+// add
 void addPoints(int x, int y) {
-  var dist = pts0.isEmpty
+  num dist = pts0.isEmpty
       ? kMaxNumPolygons
       : M.max(kMaxDist * 2 - ((pts0[pts0.length - 1].cx - x).abs() / 2), 1);
+
+  final np = new M.Point(x, y);
+  if( allPoints.length > 1 && allPoints[allPoints.length - 1] == np )
+    return;
+
+  allPoints.add(np);
+  print('addPoints $x $y');
 
   //creation des points+ pour position en cours
   var c1_0 = addDerivedPoints(new M.Point(x, y - dist), Position.Top);
   var c1_1 = addDerivedPoints(new M.Point(x, y + dist), Position.Bottom);
 
   // si d'autres points existent » creation et affichage du polygone correspondant
-  if (pts0.length > 1 && pts1.length > 1) {
+  if (pts0.length > 2 && pts1.length > 2) {
     final polygon = getPolygon(c1_0, c1_1);
     svg.append(polygon);
   }
